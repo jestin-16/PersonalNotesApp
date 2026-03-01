@@ -1,0 +1,5 @@
+{
+  "name": "Personal Notes",
+  "description": "A production-ready Personal Notes web application using React, Tailwind CSS, and Supabase.",
+  "requestFramePermissions": []
+}

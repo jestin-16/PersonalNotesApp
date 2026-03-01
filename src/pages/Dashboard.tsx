@@ -1,0 +1,253 @@
+import React, { useEffect, useState } from 'react';
+import { supabase } from '../lib/supabase';
+import { useAuth } from '../contexts/AuthContext';
+import { Plus, Trash2, Edit2, LogOut, FileText } from 'lucide-react';
+import { format } from 'date-fns';
+
+interface Note {
+  id: string;
+  title: string;
+  content: string;
+  created_at: string;
+}
+
+export default function Dashboard() {
+  const { user, signOut } = useAuth();
+  const [notes, setNotes] = useState<Note[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [isEditing, setIsEditing] = useState(false);
+  const [currentNote, setCurrentNote] = useState<{ id?: string; title: string; content: string }>({
+    title: '',
+    content: '',
+  });
+
+  useEffect(() => {
+    fetchNotes();
+  }, []);
+
+  const fetchNotes = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('notes')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setNotes(data || []);
+    } catch (error) {
+      console.error('Error fetching notes:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSaveNote = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!user) return;
+
+    try {
+      if (currentNote.id) {
+        // Update existing note
+        const { error } = await supabase
+          .from('notes')
+          .update({ title: currentNote.title, content: currentNote.content })
+          .eq('id', currentNote.id);
+
+        if (error) throw error;
+      } else {
+        // Create new note
+        const { error } = await supabase
+          .from('notes')
+          .insert([
+            {
+              title: currentNote.title,
+              content: currentNote.content,
+              user_id: user.id,
+            },
+          ]);
+
+        if (error) throw error;
+      }
+
+      setIsEditing(false);
+      setCurrentNote({ title: '', content: '' });
+      fetchNotes();
+    } catch (error) {
+      console.error('Error saving note:', error);
+      alert('Error saving note');
+    }
+  };
+
+  const handleDeleteNote = async (id: string) => {
+    if (!window.confirm('Are you sure you want to delete this note?')) return;
+
+    try {
+      const { error } = await supabase.from('notes').delete().eq('id', id);
+      if (error) throw error;
+      fetchNotes();
+    } catch (error) {
+      console.error('Error deleting note:', error);
+      alert('Error deleting note');
+    }
+  };
+
+  const openEditor = (note?: Note) => {
+    if (note) {
+      setCurrentNote(note);
+    } else {
+      setCurrentNote({ title: '', content: '' });
+    }
+    setIsEditing(true);
+  };
+
+  return (
+    <div className="min-h-screen bg-zinc-50">
+      <nav className="bg-white border-b border-zinc-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between h-16">
+            <div className="flex items-center">
+              <FileText className="h-6 w-6 text-indigo-600 mr-2" />
+              <h1 className="text-xl font-bold text-zinc-900">Personal Notes</h1>
+            </div>
+            <div className="flex items-center">
+              <span className="text-sm text-zinc-500 mr-4 hidden sm:block">{user?.email}</span>
+              <button
+                onClick={signOut}
+                className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-zinc-500 hover:text-zinc-700 focus:outline-none transition"
+              >
+                <LogOut className="h-4 w-4 mr-1" />
+                Sign out
+              </button>
+            </div>
+          </div>
+        </div>
+      </nav>
+
+      <main className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+        {isEditing ? (
+          <div className="bg-white shadow-sm rounded-xl border border-zinc-200 p-6">
+            <h2 className="text-xl font-semibold mb-4 text-zinc-900">
+              {currentNote.id ? 'Edit Note' : 'Create New Note'}
+            </h2>
+            <form onSubmit={handleSaveNote} className="space-y-4">
+              <div>
+                <label htmlFor="title" className="block text-sm font-medium text-zinc-700">
+                  Title
+                </label>
+                <input
+                  type="text"
+                  id="title"
+                  required
+                  className="mt-1 block w-full rounded-md border-zinc-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm px-4 py-2 border"
+                  value={currentNote.title}
+                  onChange={(e) => setCurrentNote({ ...currentNote, title: e.target.value })}
+                />
+              </div>
+              <div>
+                <label htmlFor="content" className="block text-sm font-medium text-zinc-700">
+                  Content
+                </label>
+                <textarea
+                  id="content"
+                  required
+                  rows={8}
+                  className="mt-1 block w-full rounded-md border-zinc-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm px-4 py-2 border"
+                  value={currentNote.content}
+                  onChange={(e) => setCurrentNote({ ...currentNote, content: e.target.value })}
+                />
+              </div>
+              <div className="flex justify-end space-x-3">
+                <button
+                  type="button"
+                  onClick={() => setIsEditing(false)}
+                  className="px-4 py-2 border border-zinc-300 shadow-sm text-sm font-medium rounded-md text-zinc-700 bg-white hover:bg-zinc-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                >
+                  Save Note
+                </button>
+              </div>
+            </form>
+          </div>
+        ) : (
+          <>
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-bold text-zinc-900">Your Notes</h2>
+              <button
+                onClick={() => openEditor()}
+                className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                New Note
+              </button>
+            </div>
+
+            {loading ? (
+              <div className="flex justify-center py-12">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+              </div>
+            ) : notes.length === 0 ? (
+              <div className="text-center py-12 bg-white rounded-xl border border-zinc-200 border-dashed">
+                <FileText className="mx-auto h-12 w-12 text-zinc-400" />
+                <h3 className="mt-2 text-sm font-medium text-zinc-900">No notes</h3>
+                <p className="mt-1 text-sm text-zinc-500">Get started by creating a new note.</p>
+                <div className="mt-6">
+                  <button
+                    onClick={() => openEditor()}
+                    className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                  >
+                    <Plus className="h-4 w-4 mr-2" />
+                    New Note
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                {notes.map((note) => (
+                  <div
+                    key={note.id}
+                    className="bg-white overflow-hidden shadow-sm rounded-xl border border-zinc-200 hover:shadow-md transition duration-200 flex flex-col"
+                  >
+                    <div className="p-5 flex-1">
+                      <h3 className="text-lg font-semibold text-zinc-900 truncate mb-2">
+                        {note.title}
+                      </h3>
+                      <p className="text-sm text-zinc-600 line-clamp-4 whitespace-pre-wrap">
+                        {note.content}
+                      </p>
+                    </div>
+                    <div className="bg-zinc-50 px-5 py-3 border-t border-zinc-100 flex justify-between items-center">
+                      <span className="text-xs text-zinc-500">
+                        {format(new Date(note.created_at), 'MMM d, yyyy')}
+                      </span>
+                      <div className="flex space-x-2">
+                        <button
+                          onClick={() => openEditor(note)}
+                          className="p-1 text-zinc-400 hover:text-indigo-600 transition"
+                          title="Edit"
+                        >
+                          <Edit2 className="h-4 w-4" />
+                        </button>
+                        <button
+                          onClick={() => handleDeleteNote(note.id)}
+                          className="p-1 text-zinc-400 hover:text-red-600 transition"
+                          title="Delete"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </>
+        )}
+      </main>
+    </div>
+  );
+}
