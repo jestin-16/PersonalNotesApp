@@ -21,6 +21,12 @@ export default function Dashboard() {
     content: '',
   });
 
+  const wordCount = currentNote.content.trim()
+    ? currentNote.content.trim().split(/\s+/).length
+    : 0;
+
+  const charCount = currentNote.content.length;
+
   useEffect(() => {
     fetchNotes();
   }, []);
@@ -147,6 +153,47 @@ export default function Dashboard() {
                 <label htmlFor="content" className="block text-sm font-medium text-zinc-700">
                   Content
                 </label>
+
+                <div className="mt-2 mb-2 flex flex-wrap items-center gap-2 text-xs text-zinc-600">
+                  <span className="font-medium mr-2">Quick insert:</span>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setCurrentNote((prev) => ({
+                        ...prev,
+                        content: (prev.content ? prev.content + '\n' : '') + '- ',
+                      }))
+                    }
+                    className="px-2 py-1 rounded border border-zinc-300 bg-zinc-50 hover:bg-zinc-100"
+                  >
+                    Bulleted list
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setCurrentNote((prev) => ({
+                        ...prev,
+                        content: (prev.content ? prev.content + '\n' : '') + '1. ',
+                      }))
+                    }
+                    className="px-2 py-1 rounded border border-zinc-300 bg-zinc-50 hover:bg-zinc-100"
+                  >
+                    Numbered list
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setCurrentNote((prev) => ({
+                        ...prev,
+                        content: (prev.content ? prev.content + '\n' : '') + '- [ ] ',
+                      }))
+                    }
+                    className="px-2 py-1 rounded border border-zinc-300 bg-zinc-50 hover:bg-zinc-100"
+                  >
+                    Checklist
+                  </button>
+                </div>
+
                 <textarea
                   id="content"
                   required
@@ -155,6 +202,10 @@ export default function Dashboard() {
                   value={currentNote.content}
                   onChange={(e) => setCurrentNote({ ...currentNote, content: e.target.value })}
                 />
+                <div className="mt-1 flex justify-between text-xs text-zinc-500">
+                  <span>{wordCount} words</span>
+                  <span>{charCount} characters</span>
+                </div>
               </div>
               <div className="flex justify-end space-x-3">
                 <button
