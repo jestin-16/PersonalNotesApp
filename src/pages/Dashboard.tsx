@@ -107,8 +107,8 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-zinc-50">
-      <nav className="bg-white border-b border-zinc-200">
+    <div className="min-h-screen bg-gradient-to-br from-zinc-50 via-slate-50 to-indigo-50">
+      <nav className="bg-white/80 backdrop-blur border-b border-zinc-200/60 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex items-center">
@@ -129,28 +129,32 @@ export default function Dashboard() {
         </div>
       </nav>
 
-      <main className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+      <main className="max-w-7xl mx-auto py-10 px-4 sm:px-6 lg:px-8 space-y-6">
         {isEditing ? (
-          <div className="bg-white shadow-sm rounded-xl border border-zinc-200 p-6">
-            <h2 className="text-xl font-semibold mb-4 text-zinc-900">
+          <div className="bg-white/90 shadow-xl rounded-2xl border border-zinc-200/80 p-6 sm:p-8 max-w-3xl mx-auto">
+            <h2 className="text-2xl font-semibold mb-2 text-zinc-900">
               {currentNote.id ? 'Edit Note' : 'Create New Note'}
             </h2>
-            <form onSubmit={handleSaveNote} className="space-y-4">
-              <div>
-                <label htmlFor="title" className="block text-sm font-medium text-zinc-700">
+            <p className="text-sm text-zinc-500 mb-6">
+              Capture your thoughts, ideas, and todos in a clean, focused editor.
+            </p>
+            <form onSubmit={handleSaveNote} className="space-y-6">
+              <div className="space-y-2">
+                <label htmlFor="title" className="block text-xs font-semibold tracking-wide text-zinc-600 uppercase">
                   Title
                 </label>
                 <input
                   type="text"
                   id="title"
                   required
-                  className="mt-1 block w-full rounded-md border-zinc-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm px-4 py-2 border"
+                  placeholder="e.g. Daily planning, Project ideas, Books to read..."
+                  className="mt-1 block w-full rounded-lg border border-zinc-300 bg-white/80 shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/40 focus:outline-none sm:text-sm px-4 py-2.5"
                   value={currentNote.title}
                   onChange={(e) => setCurrentNote({ ...currentNote, title: e.target.value })}
                 />
               </div>
-              <div>
-                <label htmlFor="content" className="block text-sm font-medium text-zinc-700">
+              <div className="space-y-2">
+                <label htmlFor="content" className="block text-xs font-semibold tracking-wide text-zinc-600 uppercase">
                   Content
                 </label>
 
@@ -164,7 +168,7 @@ export default function Dashboard() {
                         content: (prev.content ? prev.content + '\n' : '') + '- ',
                       }))
                     }
-                    className="px-2 py-1 rounded border border-zinc-300 bg-zinc-50 hover:bg-zinc-100"
+                    className="px-2.5 py-1.5 rounded-full border border-zinc-200 bg-zinc-50 hover:bg-zinc-100 text-zinc-700 shadow-sm"
                   >
                     Bulleted list
                   </button>
@@ -176,7 +180,7 @@ export default function Dashboard() {
                         content: (prev.content ? prev.content + '\n' : '') + '1. ',
                       }))
                     }
-                    className="px-2 py-1 rounded border border-zinc-300 bg-zinc-50 hover:bg-zinc-100"
+                    className="px-2.5 py-1.5 rounded-full border border-zinc-200 bg-zinc-50 hover:bg-zinc-100 text-zinc-700 shadow-sm"
                   >
                     Numbered list
                   </button>
@@ -188,7 +192,7 @@ export default function Dashboard() {
                         content: (prev.content ? prev.content + '\n' : '') + '- [ ] ',
                       }))
                     }
-                    className="px-2 py-1 rounded border border-zinc-300 bg-zinc-50 hover:bg-zinc-100"
+                    className="px-2.5 py-1.5 rounded-full border border-zinc-200 bg-zinc-50 hover:bg-zinc-100 text-zinc-700 shadow-sm"
                   >
                     Checklist
                   </button>
@@ -198,7 +202,8 @@ export default function Dashboard() {
                   id="content"
                   required
                   rows={8}
-                  className="mt-1 block w-full rounded-md border-zinc-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm px-4 py-2 border"
+                  placeholder="- Capture key points&#10;- Break work into tasks&#10;- Add checklists with the toolbar above"
+                  className="mt-1 block w-full rounded-lg border border-zinc-300 bg-white/80 shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/40 focus:outline-none sm:text-sm px-4 py-3 font-mono text-sm"
                   value={currentNote.content}
                   onChange={(e) => setCurrentNote({ ...currentNote, content: e.target.value })}
                 />
@@ -211,13 +216,13 @@ export default function Dashboard() {
                 <button
                   type="button"
                   onClick={() => setIsEditing(false)}
-                  className="px-4 py-2 border border-zinc-300 shadow-sm text-sm font-medium rounded-md text-zinc-700 bg-white hover:bg-zinc-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                  className="px-4 py-2 border border-zinc-200 shadow-sm text-sm font-medium rounded-full text-zinc-700 bg-white hover:bg-zinc-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-zinc-300"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                  className="px-4 py-2 border border-transparent shadow-sm text-sm font-semibold rounded-full text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                 >
                   Save Note
                 </button>
@@ -226,11 +231,16 @@ export default function Dashboard() {
           </div>
         ) : (
           <>
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-bold text-zinc-900">Your Notes</h2>
+            <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3 mb-4">
+              <div>
+                <h2 className="text-2xl font-bold text-zinc-900 tracking-tight">Your Notes</h2>
+                <p className="text-sm text-zinc-500 mt-1">
+                  {notes.length === 0 ? 'You have no notes yet. Start by creating one.' : `You have ${notes.length} note${notes.length === 1 ? '' : 's'} saved.`}
+                </p>
+              </div>
               <button
                 onClick={() => openEditor()}
-                className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                className="inline-flex items-center justify-center px-4 py-2 border border-transparent shadow-sm text-sm font-semibold rounded-full text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
               >
                 <Plus className="h-4 w-4 mr-2" />
                 New Note
@@ -242,14 +252,16 @@ export default function Dashboard() {
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
               </div>
             ) : notes.length === 0 ? (
-              <div className="text-center py-12 bg-white rounded-xl border border-zinc-200 border-dashed">
-                <FileText className="mx-auto h-12 w-12 text-zinc-400" />
-                <h3 className="mt-2 text-sm font-medium text-zinc-900">No notes</h3>
+              <div className="text-center py-14 bg-white/90 rounded-2xl border border-zinc-200/80 border-dashed shadow-sm">
+                <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-indigo-50">
+                  <FileText className="h-6 w-6 text-indigo-500" />
+                </div>
+                <h3 className="mt-3 text-base font-semibold text-zinc-900">No notes yet</h3>
                 <p className="mt-1 text-sm text-zinc-500">Get started by creating a new note.</p>
                 <div className="mt-6">
                   <button
                     onClick={() => openEditor()}
-                    className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                    className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-semibold rounded-full text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                   >
                     <Plus className="h-4 w-4 mr-2" />
                     New Note
@@ -257,17 +269,17 @@ export default function Dashboard() {
                 </div>
               </div>
             ) : (
-              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
                 {notes.map((note) => (
                   <div
                     key={note.id}
-                    className="bg-white overflow-hidden shadow-sm rounded-xl border border-zinc-200 hover:shadow-md transition duration-200 flex flex-col"
+                    className="bg-white/90 overflow-hidden shadow-sm rounded-2xl border border-zinc-200/80 hover:shadow-lg hover:-translate-y-0.5 transition duration-200 flex flex-col group"
                   >
                     <div className="p-5 flex-1">
-                      <h3 className="text-lg font-semibold text-zinc-900 truncate mb-2">
+                      <h3 className="text-base font-semibold text-zinc-900 line-clamp-1 mb-1.5 group-hover:text-indigo-600">
                         {note.title}
                       </h3>
-                      <p className="text-sm text-zinc-600 line-clamp-4 whitespace-pre-wrap">
+                      <p className="text-sm text-zinc-600 line-clamp-4 whitespace-pre-wrap leading-relaxed">
                         {note.content}
                       </p>
                     </div>
