@@ -207,8 +207,8 @@ export default function Dashboard() {
 
         <main className="flex-1 px-4 sm:px-8 py-8 overflow-y-auto">
           {isEditing ? (
-            /* Editor view - soft "cute" card */
-            <div className="max-w-5xl mx-auto">
+            /* Editor view - full-width soft card */
+            <div className="h-full flex flex-col">
               <div className="flex items-center gap-2 text-xs text-zinc-400 mb-4">
                 <button
                   onClick={() => setIsEditing(false)}
@@ -222,9 +222,9 @@ export default function Dashboard() {
                 </span>
               </div>
 
-              <div className="bg-white rounded-[28px] border border-zinc-100 shadow-[0_18px_40px_rgba(15,23,42,0.04)] overflow-hidden">
-                <form onSubmit={handleSaveNote}>
-                  <div className="px-10 pt-8 pb-10 space-y-6 max-md:px-6">
+              <div className="flex-1 bg-white rounded-[28px] border border-zinc-100 shadow-[0_18px_40px_rgba(15,23,42,0.04)] overflow-hidden flex flex-col">
+                <form onSubmit={handleSaveNote} className="flex-1 flex flex-col">
+                  <div className="px-10 pt-8 pb-6 space-y-6 max-md:px-6 flex-1 flex flex-col">
                     <input
                       type="text"
                       required
@@ -259,16 +259,17 @@ export default function Dashboard() {
                       </span>
                     </div>
 
-                    <textarea
-                      required
-                      rows={12}
-                      placeholder="Start writing..."
-                      className="w-full text-sm leading-relaxed placeholder:text-zinc-300 border-none focus:ring-0 p-0 resize-none text-zinc-700"
-                      value={currentNote.content}
-                      onChange={(e) =>
-                        setCurrentNote({ ...currentNote, content: e.target.value })
-                      }
-                    />
+                    <div className="flex-1 mt-2">
+                      <textarea
+                        required
+                        placeholder="Start writing..."
+                        className="w-full h-full min-h-[300px] text-sm leading-relaxed placeholder:text-zinc-300 border-none focus:ring-0 p-0 resize-none text-zinc-700"
+                        value={currentNote.content}
+                        onChange={(e) =>
+                          setCurrentNote({ ...currentNote, content: e.target.value })
+                        }
+                      />
+                    </div>
                   </div>
 
                   <div className="px-10 max-md:px-6 py-4 bg-[#f6f7fb] border-t border-zinc-100 flex justify-end items-center gap-4 text-xs">
