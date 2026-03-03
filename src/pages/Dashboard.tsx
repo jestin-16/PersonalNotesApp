@@ -207,40 +207,40 @@ export default function Dashboard() {
 
         <main className="flex-1 px-4 sm:px-8 py-8 overflow-y-auto">
           {isEditing ? (
-            /* Editor view stays centered, simple */
-            <div className="max-w-4xl mx-auto">
-              <div className="flex items-center gap-2 text-xs text-zinc-500 mb-6">
+            /* Editor view - soft "cute" card */
+            <div className="max-w-5xl mx-auto">
+              <div className="flex items-center gap-2 text-xs text-zinc-400 mb-4">
                 <button
                   onClick={() => setIsEditing(false)}
-                  className="hover:text-indigo-600 transition-colors"
+                  className="hover:text-indigo-500 transition-colors"
                 >
                   Notes
                 </button>
-                <ChevronRight className="h-3 w-3" />
-                <span className="text-zinc-900 font-medium">
+                <ChevronRight className="h-3 w-3 text-zinc-400" />
+                <span className="text-zinc-500 font-medium">
                   {currentNote.id ? 'Edit Note' : 'New Note'}
                 </span>
               </div>
 
-              <div className="bg-white border border-zinc-200 rounded-2xl shadow-sm overflow-hidden">
+              <div className="bg-white rounded-[28px] border border-zinc-100 shadow-[0_18px_40px_rgba(15,23,42,0.04)] overflow-hidden">
                 <form onSubmit={handleSaveNote}>
-                  <div className="p-8 space-y-6">
+                  <div className="px-10 pt-8 pb-10 space-y-6 max-md:px-6">
                     <input
                       type="text"
                       required
                       placeholder="Untitled Note"
-                      className="w-full text-3xl font-semibold placeholder:text-zinc-200 border-none focus:ring-0 p-0"
+                      className="w-full text-3xl max-md:text-2xl font-semibold tracking-tight text-zinc-800 placeholder:text-zinc-200 border-none focus:ring-0 p-0"
                       value={currentNote.title}
                       onChange={(e) => setCurrentNote({ ...currentNote, title: e.target.value })}
                     />
 
-                    <div className="flex items-center gap-2 pb-4 border-b border-zinc-100">
+                    <div className="flex items-center gap-2 pb-4 border-b border-zinc-100 text-xs">
                       <button
                         type="button"
                         onClick={() =>
                           setCurrentNote((p) => ({ ...p, content: p.content + '\n- ' }))
                         }
-                        className="text-xs font-medium px-3 py-1.5 rounded-md bg-zinc-50 hover:bg-zinc-100 text-zinc-600 transition-colors border border-zinc-200"
+                        className="font-medium px-3 py-1.5 rounded-full bg-zinc-50 hover:bg-zinc-100 text-zinc-600 transition-colors border border-zinc-200 shadow-[0_1px_0_rgba(15,23,42,0.04)]"
                       >
                         List
                       </button>
@@ -249,11 +249,11 @@ export default function Dashboard() {
                         onClick={() =>
                           setCurrentNote((p) => ({ ...p, content: p.content + '\n- [ ] ' }))
                         }
-                        className="text-xs font-medium px-3 py-1.5 rounded-md bg-zinc-50 hover:bg-zinc-100 text-zinc-600 transition-colors border border-zinc-200"
+                        className="font-medium px-3 py-1.5 rounded-full bg-zinc-50 hover:bg-zinc-100 text-zinc-600 transition-colors border border-zinc-200 shadow-[0_1px_0_rgba(15,23,42,0.04)]"
                       >
                         Task
                       </button>
-                      <div className="h-4 w-px bg-zinc-200 mx-1" />
+                      <div className="h-4 w-px bg-zinc-200/70 mx-1" />
                       <span className="text-[11px] uppercase tracking-wider text-zinc-400 font-bold">
                         {wordCount} Words
                       </span>
@@ -263,7 +263,7 @@ export default function Dashboard() {
                       required
                       rows={12}
                       placeholder="Start writing..."
-                      className="w-full text-sm leading-relaxed placeholder:text-zinc-300 border-none focus:ring-0 p-0 resize-none"
+                      className="w-full text-sm leading-relaxed placeholder:text-zinc-300 border-none focus:ring-0 p-0 resize-none text-zinc-700"
                       value={currentNote.content}
                       onChange={(e) =>
                         setCurrentNote({ ...currentNote, content: e.target.value })
@@ -271,17 +271,17 @@ export default function Dashboard() {
                     />
                   </div>
 
-                  <div className="px-8 py-4 bg-zinc-50 border-t border-zinc-200 flex justify-end gap-3">
+                  <div className="px-10 max-md:px-6 py-4 bg-[#f6f7fb] border-t border-zinc-100 flex justify-end items-center gap-4 text-xs">
                     <button
                       type="button"
                       onClick={() => setIsEditing(false)}
-                      className="px-4 py-2 text-xs font-medium text-zinc-600 hover:text-zinc-900 transition-colors"
+                      className="px-4 py-2 font-medium text-zinc-500 hover:text-zinc-700 transition-colors"
                     >
                       Discard
                     </button>
                     <button
                       type="submit"
-                      className="px-6 py-2 bg-indigo-600 text-white text-xs font-semibold rounded-xl hover:bg-indigo-700 shadow-sm transition-all active:scale-95"
+                      className="px-6 py-2 bg-[#4c5cff] text-white font-semibold rounded-full shadow-[0_10px_20px_rgba(76,92,255,0.45)] hover:bg-[#404ff5] transition-all active:scale-95"
                     >
                       Save Changes
                     </button>
