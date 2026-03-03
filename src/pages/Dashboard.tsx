@@ -226,7 +226,7 @@ export default function Dashboard() {
             </div>
 
             <div className="flex items-center gap-5">
-              <span className="text-[13px] font-bold text-[#111] hidden sm:block">Sayef mahmud</span>
+              <span className="text-[13px] font-bold text-[#111] hidden sm:block">{user?.email}</span>
               <div className="h-10 w-10 rounded-full bg-slate-200 border-2 border-white shadow-md overflow-hidden relative cursor-pointer hover:ring-2 hover:ring-[#A0A4AB] transition-all">
                 {user?.email ? (
                   <div className="w-full h-full bg-[#111] text-white flex items-center justify-center font-bold text-sm">
