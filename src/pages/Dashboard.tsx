@@ -4,7 +4,12 @@ import { useAuth } from '../contexts/AuthContext';
 import { Plus, Trash2, Edit3, LogOut, FileText, Search, Clock, ChevronRight } from 'lucide-react';
 import { format } from 'date-fns';
 
-// ... (Interface and Logic remain the same as your snippet)
+interface Note {
+  id: string;
+  title: string;
+  content: string;
+  created_at: string;
+}
 
 export default function Dashboard() {
   const { user, signOut } = useAuth();
@@ -18,17 +23,80 @@ export default function Dashboard() {
 
   const wordCount = currentNote.content.trim() ? currentNote.content.trim().split(/\s+/).length : 0;
 
-  useEffect(() => { fetchNotes(); }, []);
+  useEffect(() => {
+    fetchNotes();
+  }, []);
 
   const fetchNotes = async () => {
     try {
-      const { data, error } = await supabase.from('notes').select('*').order('created_at', { ascending: false });
+      const { data, error } = await supabase
+        .from('notes')
+        .select('*')
+        .order('created_at', { ascending: false });
+
       if (error) throw error;
       setNotes(data || []);
-    } catch (error) { console.error(error); } finally { setLoading(false); }
+    } catch (error) {
+      console.error('Error fetching notes:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  // ... (handleSaveNote, handleDeleteNote, openEditor logic remains the same)
+  const handleSaveNote = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!user) return;
+
+    try {
+      if (currentNote.id) {
+        const { error } = await supabase
+          .from('notes')
+          .update({ title: currentNote.title, content: currentNote.content })
+          .eq('id', currentNote.id);
+
+        if (error) throw error;
+      } else {
+        const { error } = await supabase.from('notes').insert([
+          {
+            title: currentNote.title,
+            content: currentNote.content,
+            user_id: user.id,
+          },
+        ]);
+
+        if (error) throw error;
+      }
+
+      setIsEditing(false);
+      setCurrentNote({ title: '', content: '' });
+      fetchNotes();
+    } catch (error) {
+      console.error('Error saving note:', error);
+      alert('Error saving note');
+    }
+  };
+
+  const handleDeleteNote = async (id: string) => {
+    if (!window.confirm('Are you sure you want to delete this note?')) return;
+
+    try {
+      const { error } = await supabase.from('notes').delete().eq('id', id);
+      if (error) throw error;
+      fetchNotes();
+    } catch (error) {
+      console.error('Error deleting note:', error);
+      alert('Error deleting note');
+    }
+  };
+
+  const openEditor = (note?: Note) => {
+    if (note) {
+      setCurrentNote(note);
+    } else {
+      setCurrentNote({ title: '', content: '' });
+    }
+    setIsEditing(true);
+  };
 
   return (
     <div className="min-h-screen bg-[#FAFAFA] text-zinc-900 font-sans selection:bg-indigo-100 selection:text-indigo-900">
