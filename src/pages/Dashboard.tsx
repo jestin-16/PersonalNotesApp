@@ -9,7 +9,6 @@ import {
   ChevronRight,
   Folder,
   MoreHorizontal,
-  User2,
   Calendar,
   Menu,
 } from "lucide-react";
@@ -117,6 +116,29 @@ export default function Dashboard() {
     setIsEditing(true);
   };
 
+  const filterNotesByTab = (tab: string) => {
+    const now = new Date();
+    let fromDate: Date | null = null;
+
+    if (tab === "Todays") {
+      fromDate = startOfDay(now);
+    } else if (tab === "This Week") {
+      fromDate = startOfWeek(now, { weekStartsOn: 1 });
+    } else if (tab === "This Month") {
+      fromDate = startOfMonth(now);
+    }
+
+    if (!fromDate) return notes;
+
+    return notes.filter((note) => {
+      const created = new Date(note.created_at);
+      return created >= fromDate;
+    });
+  };
+
+  const filteredFolderNotes = filterNotesByTab(folderTab);
+  const filteredNotes = filterNotesByTab(noteTab);
+
   return (
     <div className="min-h-screen bg-[#FDFEFE] text-[#111] font-sans flex overflow-hidden">
       {/* Mobile Sidebar Overlay */}
@@ -177,21 +199,6 @@ export default function Dashboard() {
           </button>
         </nav>
 
-        <div className="mt-auto items-center flex flex-col relative w-full pt-8">
-          <p className="text-[#A0A4AB] text-[10px] leading-[1.6] text-center mb-6 px-2 font-semibold">
-            Want to access unlimited<br />notes taking experience<br />& lot's of feature?
-          </p>
-          <div className="h-28 w-28 bg-transparent flex items-end justify-center mb-6 relative hover:scale-105 transition-transform cursor-pointer">
-            {/* Decorative Graphic representation */}
-            <div className="absolute inset-x-2 bottom-0 h-[45%] bg-[#F5E271] rounded-t-xl z-0 border-2 border-dashed border-[#E5D261] opacity-30"></div>
-            <div className="relative z-10 w-full h-full flex items-center justify-center">
-              <User2 className="h-14 w-14 text-[#2D3F75]" />
-            </div>
-          </div>
-          <button className="w-full rounded-lg bg-[#2D3F75] text-white py-3 text-[13px] font-bold shadow-lg shadow-[#2D3F75]/30 hover:bg-[#1f2b53] hover:shadow-xl hover:-translate-y-0.5 transition-all outline-none focus:ring-4 focus:ring-[#2D3F75]/20">
-            Upgrade pro
-          </button>
-        </div>
       </aside>
 
       {/* Main Content Area */}
@@ -237,22 +244,22 @@ export default function Dashboard() {
                 )}
               </div>
               <button className="text-[#111] hover:bg-black/5 p-2 rounded-lg transition-colors hidden sm:block">
-                <Menu className="h-6 w-6 stroke-[2]" />
+                <Menu className="h-6 w-6 stroke-2" />
               </button>
               <button
                 onClick={signOut}
                 className="text-[#A0A4AB] hover:text-rose-500 hover:bg-rose-50 p-2 rounded-lg transition-colors ml-1"
                 title="Sign Out"
               >
-                <LogOut className="h-5 w-5 stroke-[2]" />
+                <LogOut className="h-5 w-5 stroke-2" />
               </button>
             </div>
           </header>
 
           <main className="flex-1 px-12 pb-12 overflow-y-auto custom-scrollbar relative z-0">
             {isEditing ? (
-              /* Editor view matching minimal approach */
-              <div className="max-w-4xl h-full flex flex-col pt-4">
+              /* Editor view full-width, full-height */
+              <div className="h-full flex flex-col pt-4">
                 <div className="flex items-center gap-2 mb-6">
                   <button
                     onClick={() => setIsEditing(false)}
@@ -319,15 +326,15 @@ export default function Dashboard() {
                     <div className="flex gap-10 text-[13px] font-bold text-[#B0B3BC]">
                       <button
                         onClick={() => setFolderTab('Todays')}
-                        className={`pb-2 ${folderTab === 'Todays' ? 'text-[#111] border-b-[2px] border-[#111]' : 'hover:text-[#111] transition-colors'}`}
+                        className={`pb-2 ${folderTab === 'Todays' ? 'text-[#111] border-b-2 border-[#111]' : 'hover:text-[#111] transition-colors'}`}
                       >Todays</button>
                       <button
                         onClick={() => setFolderTab('This Week')}
-                        className={`pb-2 ${folderTab === 'This Week' ? 'text-[#111] border-b-[2px] border-[#111]' : 'hover:text-[#111] transition-colors'}`}
+                        className={`pb-2 ${folderTab === 'This Week' ? 'text-[#111] border-b-2 border-[#111]' : 'hover:text-[#111] transition-colors'}`}
                       >This Week</button>
                       <button
                         onClick={() => setFolderTab('This Month')}
-                        className={`pb-2 ${folderTab === 'This Month' ? 'text-[#111] border-b-[2px] border-[#111]' : 'hover:text-[#111] transition-colors'}`}
+                        className={`pb-2 ${folderTab === 'This Month' ? 'text-[#111] border-b-2 border-[#111]' : 'hover:text-[#111] transition-colors'}`}
                       >This Month</button>
                     </div>
                   </div>
@@ -344,7 +351,7 @@ export default function Dashboard() {
                   ) : (
                     <div className="flex gap-6 overflow-x-auto pb-6 pt-2 -mt-2 -ml-2 pl-2 custom-scrollbar">
                       {/* Visual cards mapping specific to layout structure */}
-                      {notes.slice(0, 3).map((note, idx) => {
+                      {filteredFolderNotes.slice(0, 3).map((note, idx) => {
                         const styleSets = [
                           { bg: "bg-[#DDEBFF]", iconBg: "bg-[#7198FE]", text: "text-[#111]" }, // Light Blue
                           { bg: "bg-[#FBD6D6]", iconBg: "bg-[#C4806A]", text: "text-[#111]" }, // Light Pink
@@ -381,7 +388,7 @@ export default function Dashboard() {
                         );
                       })}
 
-                      <button className="min-w-[160px] h-[190px] rounded-[28px] border-[2px] border-dashed border-[#D1D5DC] hover:border-[#111] hover:bg-black/5 transition-all flex flex-col items-center justify-center gap-4 group">
+                      <button className="min-w-[160px] h-[190px] rounded-[28px] border-2 border-dashed border-[#D1D5DC] hover:border-[#111] hover:bg-black/5 transition-all flex flex-col items-center justify-center gap-4 group">
                         <div className="bg-[#111] h-12 w-12 rounded-[18px] flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-md">
                           <Folder className="h-6 w-6 text-white" strokeWidth={2.5} />
                         </div>
@@ -401,21 +408,21 @@ export default function Dashboard() {
                       <div className="flex gap-10 text-[13px] font-bold text-[#B0B3BC]">
                         <button
                           onClick={() => setNoteTab('Todays')}
-                          className={`pb-2 ${noteTab === 'Todays' ? 'text-[#111] border-b-[2px] border-[#111]' : 'hover:text-[#111] transition-colors'}`}
+                          className={`pb-2 ${noteTab === 'Todays' ? 'text-[#111] border-b-2 border-[#111]' : 'hover:text-[#111] transition-colors'}`}
                         >Todays</button>
                         <button
                           onClick={() => setNoteTab('This Week')}
-                          className={`pb-2 ${noteTab === 'This Week' ? 'text-[#111] border-b-[2px] border-[#111]' : 'hover:text-[#111] transition-colors'}`}
+                          className={`pb-2 ${noteTab === 'This Week' ? 'text-[#111] border-b-2 border-[#111]' : 'hover:text-[#111] transition-colors'}`}
                         >This Week</button>
                         <button
                           onClick={() => setNoteTab('This Month')}
-                          className={`pb-2 ${noteTab === 'This Month' ? 'text-[#111] border-b-[2px] border-[#111]' : 'hover:text-[#111] transition-colors'}`}
+                          className={`pb-2 ${noteTab === 'This Month' ? 'text-[#111] border-b-2 border-[#111]' : 'hover:text-[#111] transition-colors'}`}
                         >This Month</button>
                       </div>
                       <div className="flex items-center gap-4 text-xs font-bold text-[#B0B3BC] pb-2">
-                        <ChevronRight className="h-3 w-3 rotate-180 cursor-pointer hover:text-[#111] transition-colors stroke-[3]" />
-                        <span>December 2021</span>
-                        <ChevronRight className="h-3 w-3 cursor-pointer hover:text-[#111] transition-colors stroke-[3]" />
+                        <ChevronRight className="h-3 w-3 rotate-180 cursor-default stroke-3" />
+                        <span>{format(new Date(), "MMMM yyyy")}</span>
+                        <ChevronRight className="h-3 w-3 cursor-default stroke-3" />
                       </div>
                     </div>
                   </div>
@@ -431,7 +438,7 @@ export default function Dashboard() {
                     </div>
                   ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6 pb-10">
-                      {notes.map((note, idx) => {
+                      {filteredNotes.map((note, idx) => {
                         const cardThemes = [
                           { bg: "bg-[#DFE572]", text: "text-[#3F4420]" }, // Yellow
                           { bg: "bg-[#EDA7A9]", text: "text-[#592D30]" }, // Pinkish Red
@@ -481,7 +488,7 @@ export default function Dashboard() {
 
                       <button
                         onClick={() => openEditor()}
-                        className="h-[360px] rounded-[28px] border-[2px] border-dashed border-[#D1D5DC] hover:border-[#111] hover:bg-black/5 transition-all flex flex-col items-center justify-center gap-5 group"
+                        className="h-[360px] rounded-[28px] border-2 border-dashed border-[#D1D5DC] hover:border-[#111] hover:bg-black/5 transition-all flex flex-col items-center justify-center gap-5 group"
                       >
                         <div className="bg-[#111] h-14 w-14 rounded-[20px] shadow-md flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
                           {/* Solid page + addition combined conceptually into a document icon */}
