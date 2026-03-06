@@ -169,7 +169,7 @@ export default function Dashboard() {
             <div className="h-4 w-4 bg-[#7D9DE5] rounded-tl-full rounded-br-full mix-blend-screen opacity-80"></div>
           </div>
           <span className="text-[20px] font-bold tracking-[0.15em] text-[#0A1A44]">
-            MINO
+            JESTIN
           </span>
         </div>
 
