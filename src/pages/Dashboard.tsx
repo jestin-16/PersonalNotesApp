@@ -14,6 +14,7 @@ import {
   X,
 } from "lucide-react";
 import { format, startOfWeek, startOfDay, startOfMonth } from "date-fns";
+import { motion, AnimatePresence } from "motion/react";
 
 interface Note {
   id: string;
@@ -150,7 +151,11 @@ export default function Dashboard() {
   const filteredNotes = filterNotesByTab(noteTab, searchedNotes);
 
   return (
-    <div className="min-h-screen bg-[#FDFEFE] text-[#111] font-sans flex overflow-hidden">
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      className="min-h-screen bg-[#FDFEFE] text-[#111] font-sans flex overflow-hidden"
+    >
       {/* Mobile Sidebar Overlay */}
       {sidebarOpen && (
         <div
@@ -164,14 +169,19 @@ export default function Dashboard() {
         className={`fixed md:static inset-y-0 left-0 z-50 w-[280px] bg-[#F7F9FB] px-8 py-10 flex flex-col transition-transform duration-300 ease-in-out ${sidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
           }`}
       >
-        <div className="flex items-center gap-3 mb-12">
+        <motion.div
+          initial={{ x: -20, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          transition={{ delay: 0.1, type: "spring", stiffness: 100 }}
+          className="flex items-center gap-3 mb-12"
+        >
           <div className="h-8 w-8 rounded-full bg-[#1A3B8B] flex items-center justify-center">
             <div className="h-4 w-4 bg-[#7D9DE5] rounded-tl-full rounded-br-full mix-blend-screen opacity-80"></div>
           </div>
           <span className="text-[20px] font-bold tracking-[0.15em] text-[#0A1A44]">
             JESTIN
           </span>
-        </div>
+        </motion.div>
 
         <div className="mb-12">
           <button
@@ -270,235 +280,306 @@ export default function Dashboard() {
           </header>
 
           <main className="flex-1 px-12 pb-12 overflow-y-auto custom-scrollbar relative z-0">
-            {isEditing ? (
-              <div className="h-full flex flex-col pt-4">
-                <div className="flex items-center gap-2 mb-6">
-                  <button
-                    onClick={() => setIsEditing(false)}
-                    className="flex items-center gap-1 hover:text-slate-800 text-slate-500 transition-colors font-semibold text-sm bg-white px-4 py-2 rounded-xl border border-slate-200 shadow-sm"
-                  >
-                    <ChevronRight className="h-4 w-4 rotate-180" />
-                    Back
-                  </button>
-                </div>
-
-                <div className="flex-1 bg-white rounded-[32px] p-10 flex flex-col shadow-sm border border-[#eaedf1]">
-                  <form onSubmit={handleSaveNote} className="flex-1 flex flex-col">
-                    <input
-                      type="text"
-                      placeholder="Title..."
-                      className="w-full text-5xl font-bold tracking-tight text-slate-800 placeholder:text-slate-200 border-none focus:ring-0 p-0 bg-transparent mb-8"
-                      value={currentNote.title}
-                      onChange={(e) =>
-                        setCurrentNote({ ...currentNote, title: e.target.value })
-                      }
-                    />
-                    <div className="flex-1">
-                      <textarea
-                        required
-                        placeholder="Contents..."
-                        className="w-full h-full min-h-[400px] text-lg leading-relaxed placeholder:text-slate-300 border-none focus:ring-0 p-0 resize-none text-slate-600 bg-transparent custom-scrollbar"
-                        value={currentNote.content}
-                        onChange={(e) =>
-                          setCurrentNote({
-                            ...currentNote,
-                            content: e.target.value,
-                          })
-                        }
-                        autoFocus
-                      />
-                    </div>
-                    <div className="pt-6 border-t border-slate-100 flex justify-end gap-3 mt-4">
-                      <button
-                        type="button"
-                        onClick={() => setIsEditing(false)}
-                        className="px-6 py-3 font-bold text-slate-500 hover:bg-slate-50 rounded-xl transition-all"
-                      >
-                        Cancel
-                      </button>
-                      <button
-                        type="submit"
-                        className="px-8 py-3 bg-[#111] text-white font-bold rounded-xl hover:bg-black transition-all"
-                      >
-                        Save Note
-                      </button>
-                    </div>
-                  </form>
-                </div>
-              </div>
-            ) : (
-              <div className="max-w-[1400px] flex flex-col gap-[50px]">
-
-                {/* Recent Folders */}
-                <section>
-                  <div className="mb-6">
-                    <h2 className="text-[22px] font-bold text-[#111] mb-5 tracking-tight">
-                      Recent Folders
-                    </h2>
-                    <div className="flex gap-10 text-[13px] font-bold text-[#B0B3BC]">
-                      {['Todays', 'This Week', 'This Month'].map((tab) => (
-                        <button
-                          key={tab}
-                          onClick={() => setFolderTab(tab)}
-                          className={`pb-2 ${folderTab === tab ? 'text-[#111] border-b-2 border-[#111]' : 'hover:text-[#111] transition-colors'}`}
-                        >
-                          {tab}
-                        </button>
-                      ))}
-                    </div>
+            <AnimatePresence mode="wait">
+              {isEditing ? (
+                <motion.div
+                  key="editor"
+                  initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                  transition={{ type: "spring", bounce: 0.3, duration: 0.5 }}
+                  className="h-full flex flex-col pt-4"
+                >
+                  <div className="flex items-center gap-2 mb-6">
+                    <button
+                      onClick={() => setIsEditing(false)}
+                      className="flex items-center gap-1 hover:text-slate-800 text-slate-500 transition-colors font-semibold text-sm bg-white px-4 py-2 rounded-xl border border-slate-200 shadow-sm"
+                    >
+                      <ChevronRight className="h-4 w-4 rotate-180" />
+                      Back
+                    </button>
                   </div>
 
-                  {loading ? (
-                    <div className="flex gap-6 overflow-x-auto pb-4 custom-scrollbar">
-                      {[1, 2, 3].map((i) => (
-                        <div key={i} className="h-[180px] min-w-[260px] rounded-[28px] bg-slate-200 animate-pulse" />
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="flex gap-6 overflow-x-auto pb-6 pt-2 -mt-2 -ml-2 pl-2 custom-scrollbar">
-                      {filteredFolderNotes.slice(0, 3).map((note, idx) => {
-                        const styleSets = [
-                          { bg: "bg-[#DDEBFF]", iconBg: "bg-[#7198FE]" },
-                          { bg: "bg-[#FBD6D6]", iconBg: "bg-[#C4806A]" },
-                          { bg: "bg-[#FEF8DD]", iconBg: "bg-[#C6CD55]" },
-                        ];
-                        const theme = styleSets[idx % styleSets.length];
+                  <div className="flex-1 bg-white rounded-[32px] p-10 flex flex-col shadow-sm border border-[#eaedf1]">
+                    <form onSubmit={handleSaveNote} className="flex-1 flex flex-col">
+                      <input
+                        type="text"
+                        placeholder="Title..."
+                        className="w-full text-5xl font-bold tracking-tight text-slate-800 placeholder:text-slate-200 border-none focus:ring-0 p-0 bg-transparent mb-8"
+                        value={currentNote.title}
+                        onChange={(e) =>
+                          setCurrentNote({ ...currentNote, title: e.target.value })
+                        }
+                      />
+                      <div className="flex-1">
+                        <textarea
+                          required
+                          placeholder="Contents..."
+                          className="w-full h-full min-h-[400px] text-lg leading-relaxed placeholder:text-slate-300 border-none focus:ring-0 p-0 resize-none text-slate-600 bg-transparent custom-scrollbar"
+                          value={currentNote.content}
+                          onChange={(e) =>
+                            setCurrentNote({
+                              ...currentNote,
+                              content: e.target.value,
+                            })
+                          }
+                          autoFocus
+                        />
+                      </div>
+                      <div className="pt-6 border-t border-slate-100 flex justify-end gap-3 mt-4">
+                        <button
+                          type="button"
+                          onClick={() => setIsEditing(false)}
+                          className="px-6 py-3 font-bold text-slate-500 hover:bg-slate-50 rounded-xl transition-all"
+                        >
+                          Cancel
+                        </button>
+                        <button
+                          type="submit"
+                          className="px-8 py-3 bg-[#111] text-white font-bold rounded-xl hover:bg-black transition-all"
+                        >
+                          Save Note
+                        </button>
+                      </div>
+                    </form>
+                  </div>
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="list"
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  transition={{ duration: 0.3 }}
+                  className="max-w-[1400px] flex flex-col gap-[50px]"
+                >
 
-                        return (
-                          <div
-                            key={`folder-${note.id}`}
-                            onClick={() => openEditor(note)}
-                            className={`min-w-[260px] h-[190px] rounded-[28px] p-7 flex flex-col justify-between cursor-pointer hover:shadow-[0_10px_30px_-10px_rgba(0,0,0,0.1)] hover:-translate-y-1 transition-all duration-300 ${theme.bg}`}
-                          >
-                            <div className="flex justify-between items-start">
-                              <div className={`h-[52px] w-[52px] shrink-0 rounded-2xl flex items-center justify-center ${theme.iconBg} -ml-1 -mt-1 shadow-sm`}>
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
-                                  <path d="M14 2H6C4.89543 2 4 2.89543 4 4V20C4 21.1046 4.89543 22 6 22H18C19.1046 22 20 21.1046 20 20V8L14 2Z" />
-                                </svg>
-                              </div>
-                              <button className="text-[#111]/40 hover:text-[#111] transition-colors p-1">
-                                <MoreHorizontal className="h-6 w-6" strokeWidth={3} />
-                              </button>
-                            </div>
-                            <div>
-                              <div className="text-[18px] font-bold line-clamp-1 mb-1.5 tracking-tight text-[#111]">
-                                {note.title || "Untitled Folder"}
-                              </div>
-                              <div className="text-[11px] font-bold opacity-40 uppercase tracking-wider text-[#111]">
-                                {format(new Date(note.created_at), "dd/MM/yyyy")}
-                              </div>
-                            </div>
-                          </div>
-                        );
-                      })}
-
-                      <button className="min-w-[160px] h-[190px] rounded-[28px] border-2 border-dashed border-[#D1D5DC] hover:border-[#111] hover:bg-black/5 transition-all flex flex-col items-center justify-center gap-4 group">
-                        <div className="bg-[#111] h-12 w-12 rounded-[18px] flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-md">
-                          <Plus className="h-6 w-6 text-white" strokeWidth={2.5} />
-                        </div>
-                        <span className="font-bold text-[13px] text-[#111]">New folder</span>
-                      </button>
-                    </div>
-                  )}
-                </section>
-
-                {/* My Notes Section */}
-                <section>
-                  <div className="mb-6 flex flex-col">
-                    <h2 className="text-[22px] font-bold text-[#111] mb-5 tracking-tight">
-                      My Notes
-                    </h2>
-                    <div className="flex justify-between items-end w-full">
+                  {/* Recent Folders */}
+                  <section>
+                    <div className="mb-6">
+                      <h2 className="text-[22px] font-bold text-[#111] mb-5 tracking-tight">
+                        Recent Folders
+                      </h2>
                       <div className="flex gap-10 text-[13px] font-bold text-[#B0B3BC]">
                         {['Todays', 'This Week', 'This Month'].map((tab) => (
                           <button
                             key={tab}
-                            onClick={() => setNoteTab(tab)}
-                            className={`pb-2 ${noteTab === tab ? 'text-[#111] border-b-2 border-[#111]' : 'hover:text-[#111] transition-colors'}`}
+                            onClick={() => setFolderTab(tab)}
+                            className={`relative pb-2 ${folderTab === tab ? 'text-[#111]' : 'hover:text-[#111] transition-colors'}`}
                           >
                             {tab}
+                            {folderTab === tab && (
+                              <motion.div
+                                layoutId="activeFolderTab"
+                                className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#111]"
+                              />
+                            )}
                           </button>
                         ))}
                       </div>
-                      <div className="flex items-center gap-4 text-xs font-bold text-[#B0B3BC] pb-2">
-                        <ChevronRight className="h-3 w-3 rotate-180 cursor-default stroke-3" />
-                        <span>{format(new Date(), "MMMM yyyy")}</span>
-                        <ChevronRight className="h-3 w-3 cursor-default stroke-3" />
+                    </div>
+
+                    {loading ? (
+                      <div className="flex gap-6 overflow-x-auto pb-4 custom-scrollbar">
+                        {[1, 2, 3].map((i) => (
+                          <div key={i} className="h-[180px] min-w-[260px] rounded-[28px] bg-slate-200 animate-pulse" />
+                        ))}
+                      </div>
+                    ) : (
+                      <motion.div
+                        variants={{
+                          hidden: { opacity: 0 },
+                          show: {
+                            opacity: 1,
+                            transition: { staggerChildren: 0.1 }
+                          }
+                        }}
+                        initial="hidden"
+                        animate="show"
+                        className="flex gap-6 overflow-x-auto pb-6 pt-2 -mt-2 -ml-2 pl-2 custom-scrollbar"
+                      >
+                        {filteredFolderNotes.slice(0, 3).map((note, idx) => {
+                          const styleSets = [
+                            { bg: "bg-[#DDEBFF]", iconBg: "bg-[#7198FE]" },
+                            { bg: "bg-[#FBD6D6]", iconBg: "bg-[#C4806A]" },
+                            { bg: "bg-[#FEF8DD]", iconBg: "bg-[#C6CD55]" },
+                          ];
+                          const theme = styleSets[idx % styleSets.length];
+
+                          return (
+                            <motion.div
+                              variants={{ hidden: { y: 20, opacity: 0 }, show: { y: 0, opacity: 1, transition: { type: "spring", stiffness: 120 } } }}
+                              whileHover={{ scale: 1.03, y: -4, rotate: (idx % 2 === 0 ? 1 : -1) }}
+                              whileTap={{ scale: 0.97 }}
+                              key={`folder-${note.id}`}
+                              onClick={() => openEditor(note)}
+                              className={`min-w-[260px] h-[190px] rounded-[28px] p-7 flex flex-col justify-between cursor-pointer hover:shadow-[0_10px_30px_-10px_rgba(0,0,0,0.1)] transition-colors ${theme.bg}`}
+                            >
+                              <div className="flex justify-between items-start">
+                                <div className={`h-[52px] w-[52px] shrink-0 rounded-2xl flex items-center justify-center ${theme.iconBg} -ml-1 -mt-1 shadow-sm`}>
+                                  <svg width="24" height="24" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M14 2H6C4.89543 2 4 2.89543 4 4V20C4 21.1046 4.89543 22 6 22H18C19.1046 22 20 21.1046 20 20V8L14 2Z" />
+                                  </svg>
+                                </div>
+                                <button className="text-[#111]/40 hover:text-[#111] transition-colors p-1">
+                                  <MoreHorizontal className="h-6 w-6" strokeWidth={3} />
+                                </button>
+                              </div>
+                              <div>
+                                <div className="text-[18px] font-bold line-clamp-1 mb-1.5 tracking-tight text-[#111]">
+                                  {note.title || "Untitled Folder"}
+                                </div>
+                                <div className="text-[11px] font-bold opacity-40 uppercase tracking-wider text-[#111]">
+                                  {format(new Date(note.created_at), "dd/MM/yyyy")}
+                                </div>
+                              </div>
+                            </motion.div>
+                          );
+                        })}
+
+                        <motion.button
+                          variants={{ hidden: { opacity: 0 }, show: { opacity: 1 } }}
+                          whileHover={{ scale: 1.03 }}
+                          whileTap={{ scale: 0.95 }}
+                          className="min-w-[160px] h-[190px] rounded-[28px] border-2 border-dashed border-[#D1D5DC] hover:border-[#111] hover:bg-black/5 transition-colors flex flex-col items-center justify-center gap-4 group"
+                        >
+                          <motion.div
+                            whileHover={{ rotate: 90 }}
+                            className="bg-[#111] h-12 w-12 rounded-[18px] flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-md"
+                          >
+                            <Plus className="h-6 w-6 text-white" strokeWidth={2.5} />
+                          </motion.div>
+                          <span className="font-bold text-[13px] text-[#111]">New folder</span>
+                        </motion.button>
+                      </motion.div>
+                    )}
+                  </section>
+
+                  {/* My Notes Section */}
+                  <section>
+                    <div className="mb-6 flex flex-col">
+                      <h2 className="text-[22px] font-bold text-[#111] mb-5 tracking-tight">
+                        My Notes
+                      </h2>
+                      <div className="flex justify-between items-end w-full">
+                        <div className="flex gap-10 text-[13px] font-bold text-[#B0B3BC]">
+                          {['Todays', 'This Week', 'This Month'].map((tab) => (
+                            <button
+                              key={tab}
+                              onClick={() => setNoteTab(tab)}
+                              className={`relative pb-2 ${noteTab === tab ? 'text-[#111]' : 'hover:text-[#111] transition-colors'}`}
+                            >
+                              {tab}
+                              {noteTab === tab && (
+                                <motion.div
+                                  layoutId="activeNoteTab"
+                                  className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#111]"
+                                />
+                              )}
+                            </button>
+                          ))}
+                        </div>
+                        <div className="flex items-center gap-4 text-xs font-bold text-[#B0B3BC] pb-2">
+                          <ChevronRight className="h-3 w-3 rotate-180 cursor-default stroke-3" />
+                          <span>{format(new Date(), "MMMM yyyy")}</span>
+                          <ChevronRight className="h-3 w-3 cursor-default stroke-3" />
+                        </div>
                       </div>
                     </div>
-                  </div>
 
-                  {loading ? (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6">
-                      {[1, 2, 3, 4].map((i) => (
-                        <div key={i} className="h-[360px] rounded-[28px] bg-slate-200 animate-pulse" />
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6 pb-10">
-                      {filteredNotes.map((note, idx) => {
-                        const cardThemes = [
-                          { bg: "bg-[#DFE572]", text: "text-[#3F4420]" },
-                          { bg: "bg-[#EDA7A9]", text: "text-[#592D30]" },
-                          { bg: "bg-[#7DB9E0]", text: "text-[#243F57]" },
-                        ];
-                        const theme = cardThemes[idx % cardThemes.length];
-
-                        return (
-                          <div
-                            key={note.id}
-                            // ENTIRE CARD IS NOW CLICKABLE
-                            onClick={() => openEditor(note)}
-                            className={`group rounded-[28px] p-8 flex flex-col h-[360px] cursor-pointer hover:shadow-[0_15px_35px_-10px_rgba(0,0,0,0.15)] hover:-translate-y-1.5 transition-all duration-300 relative ${theme.bg} ${theme.text}`}
-                          >
-                            <div className="text-[10px] font-black opacity-60 mb-5 uppercase tracking-widest">
-                              {format(new Date(note.created_at), "dd/MM/yyyy")}
-                            </div>
-                            <div className="flex justify-between items-start mb-6">
-                              <h3 className="text-[24px] font-bold leading-[1.2] line-clamp-2 pr-6 tracking-tight">
-                                {note.title || "Untitled"}
-                              </h3>
-                              <div className="h-8 w-8 rounded-[10px] bg-[#111] text-white flex items-center justify-center shrink-0 hover:scale-110 transition-transform shadow-md">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                  <path d="M15.232 5.232L18.768 8.768M16.732 3.732C17.1226 3.34142 17.6523 3.122 18.2045 3.122C18.7567 3.122 19.2864 3.34142 19.677 3.732C20.0676 4.12258 20.287 4.65228 20.287 5.2045C20.287 5.75671 20.0676 6.28641 19.677 6.677L6.5 19.853L2 22L4.147 17.5L17.276 4.372Z" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-                                </svg>
-                              </div>
-                            </div>
-                            <p className="text-[14px] font-medium leading-[1.6] line-clamp-5 opacity-80 whitespace-pre-wrap flex-1 w-[90%]">
-                              {note.content}
-                            </p>
-                            <div className="mt-6 pt-5 flex items-center justify-between text-[11px] font-bold">
-                              <div className="flex items-center gap-2 opacity-80">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-                                <span className="uppercase">{format(new Date(note.created_at), "hh:mm a, eeee")}</span>
-                              </div>
-                              <button
-                                onClick={(e) => handleDeleteNote(note.id, e)}
-                                className="opacity-0 group-hover:opacity-100 transition-opacity hover:underline decoration-2 underline-offset-2 uppercase tracking-wide"
-                              >
-                                Delete
-                              </button>
-                            </div>
-                          </div>
-                        );
-                      })}
-
-                      <button
-                        onClick={() => openEditor()}
-                        className="h-[360px] rounded-[28px] border-2 border-dashed border-[#D1D5DC] hover:border-[#111] hover:bg-black/5 transition-all flex flex-col items-center justify-center gap-5 group"
+                    {loading ? (
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6">
+                        {[1, 2, 3, 4].map((i) => (
+                          <div key={i} className="h-[360px] rounded-[28px] bg-slate-200 animate-pulse" />
+                        ))}
+                      </div>
+                    ) : (
+                      <motion.div
+                        variants={{
+                          hidden: { opacity: 0 },
+                          show: {
+                            opacity: 1,
+                            transition: { staggerChildren: 0.08 }
+                          }
+                        }}
+                        initial="hidden"
+                        animate="show"
+                        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6 pb-10"
                       >
-                        <div className="bg-[#111] h-14 w-14 rounded-[20px] shadow-md flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                          <svg width="24" height="24" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
-                            <path fillRule="evenodd" clipRule="evenodd" d="M14 2H6C4.89543 2 4 2.89543 4 4V20C4 21.1046 4.89543 22 6 22H18C19.1046 22 20 21.1046 20 20V8L14 2ZM13 14V11H11V14H8V16H11V19H13V16H16V14H13Z" />
-                          </svg>
-                        </div>
-                        <span className="font-bold text-[14px] text-[#111]">New Note</span>
-                      </button>
-                    </div>
-                  )}
-                </section>
-              </div>
-            )}
+                        {filteredNotes.map((note, idx) => {
+                          const cardThemes = [
+                            { bg: "bg-[#DFE572]", text: "text-[#3F4420]" },
+                            { bg: "bg-[#EDA7A9]", text: "text-[#592D30]" },
+                            { bg: "bg-[#7DB9E0]", text: "text-[#243F57]" },
+                          ];
+                          const theme = cardThemes[idx % cardThemes.length];
+
+                          return (
+                            <motion.div
+                              variants={{ hidden: { y: 30, opacity: 0, scale: 0.95 }, show: { y: 0, opacity: 1, scale: 1, transition: { type: "spring", bounce: 0.4 } } }}
+                              whileHover={{ scale: 1.02, y: -5, rotate: (idx % 2 === 0 ? 0.5 : -0.5) }}
+                              whileTap={{ scale: 0.98 }}
+                              key={note.id}
+                              // ENTIRE CARD IS NOW CLICKABLE
+                              onClick={() => openEditor(note)}
+                              className={`group rounded-[28px] p-8 flex flex-col h-[360px] cursor-pointer hover:shadow-[0_15px_35px_-10px_rgba(0,0,0,0.15)] transition-colors relative ${theme.bg} ${theme.text}`}
+                            >
+                              <div className="text-[10px] font-black opacity-60 mb-5 uppercase tracking-widest">
+                                {format(new Date(note.created_at), "dd/MM/yyyy")}
+                              </div>
+                              <div className="flex justify-between items-start mb-6">
+                                <h3 className="text-[24px] font-bold leading-[1.2] line-clamp-2 pr-6 tracking-tight">
+                                  {note.title || "Untitled"}
+                                </h3>
+                                <div className="h-8 w-8 rounded-[10px] bg-[#111] text-white flex items-center justify-center shrink-0 hover:scale-110 transition-transform shadow-md">
+                                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M15.232 5.232L18.768 8.768M16.732 3.732C17.1226 3.34142 17.6523 3.122 18.2045 3.122C18.7567 3.122 19.2864 3.34142 19.677 3.732C20.0676 4.12258 20.287 4.65228 20.287 5.2045C20.287 5.75671 20.0676 6.28641 19.677 6.677L6.5 19.853L2 22L4.147 17.5L17.276 4.372Z" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+                                  </svg>
+                                </div>
+                              </div>
+                              <p className="text-[14px] font-medium leading-[1.6] line-clamp-5 opacity-80 whitespace-pre-wrap flex-1 w-[90%]">
+                                {note.content}
+                              </p>
+                              <div className="mt-6 pt-5 flex items-center justify-between text-[11px] font-bold">
+                                <div className="flex items-center gap-2 opacity-80">
+                                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                                  <span className="uppercase">{format(new Date(note.created_at), "hh:mm a, eeee")}</span>
+                                </div>
+                                <button
+                                  onClick={(e) => handleDeleteNote(note.id, e)}
+                                  className="opacity-0 group-hover:opacity-100 transition-opacity hover:underline decoration-2 underline-offset-2 uppercase tracking-wide"
+                                >
+                                  Delete
+                                </button>
+                              </div>
+                            </motion.div>
+                          );
+                        })}
+
+                        <motion.button
+                          variants={{ hidden: { opacity: 0 }, show: { opacity: 1 } }}
+                          whileHover={{ scale: 1.02, y: -5 }}
+                          whileTap={{ scale: 0.98 }}
+                          onClick={() => openEditor()}
+                          className="h-[360px] rounded-[28px] border-2 border-dashed border-[#D1D5DC] hover:border-[#111] hover:bg-black/5 transition-colors flex flex-col items-center justify-center gap-5 group"
+                        >
+                          <motion.div
+                            whileHover={{ rotate: 180 }}
+                            transition={{ type: "spring", stiffness: 200, damping: 10 }}
+                            className="bg-[#111] h-14 w-14 rounded-[20px] shadow-md flex items-center justify-center group-hover:scale-110 transition-transform duration-300"
+                          >
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
+                              <path fillRule="evenodd" clipRule="evenodd" d="M14 2H6C4.89543 2 4 2.89543 4 4V20C4 21.1046 4.89543 22 6 22H18C19.1046 22 20 21.1046 20 20V8L14 2ZM13 14V11H11V14H8V16H11V19H13V16H16V14H13Z" />
+                            </svg>
+                          </motion.div>
+                          <span className="font-bold text-[14px] text-[#111]">New Note</span>
+                        </motion.button>
+                      </motion.div>
+                    )}
+                  </section>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </main>
         </div>
       </div>
@@ -509,6 +590,6 @@ export default function Dashboard() {
           width: 0px;
         }
       `}</style>
-    </div>
+    </motion.div>
   );
 }
