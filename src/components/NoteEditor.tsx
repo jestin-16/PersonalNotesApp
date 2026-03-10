@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { useEditor, EditorContent, BubbleMenu, FloatingMenu } from '@tiptap/react';
+import { useEditor, EditorContent } from '@tiptap/react';
+import { BubbleMenu, FloatingMenu } from '@tiptap/react/menus';
 import StarterKit from '@tiptap/starter-kit';
 import Placeholder from '@tiptap/extension-placeholder';
 import CharacterCount from '@tiptap/extension-character-count';
@@ -165,7 +166,7 @@ export function NoteEditor({ note, onClose, onUpdate, isSaving }: NoteEditorProp
 
             {/* Tiptap Bubble Menu */}
             {editor && (
-              <BubbleMenu editor={editor} tippyOptions={{ duration: 100 }} className="flex bg-[#111] text-white rounded-xl shadow-xl overflow-hidden p-1 border border-slate-700">
+              <BubbleMenu editor={editor} className="flex bg-[#111] text-white rounded-xl shadow-xl overflow-hidden p-1 border border-slate-700">
                 <button
                   onClick={() => editor.chain().focus().toggleBold().run()}
                   className={cn("p-2 rounded-lg hover:bg-white/20 transition-colors", editor.isActive('bold') && 'bg-white/20')}
@@ -196,7 +197,7 @@ export function NoteEditor({ note, onClose, onUpdate, isSaving }: NoteEditorProp
 
             {/* Tiptap Floating Menu (Slash commands replacement) */}
             {editor && (
-              <FloatingMenu editor={editor} tippyOptions={{ duration: 100 }} className="flex bg-white rounded-xl shadow-[0_10px_30px_-10px_rgba(0,0,0,0.1)] overflow-hidden p-1 border border-slate-200">
+              <FloatingMenu editor={editor} className="flex bg-white rounded-xl shadow-[0_10px_30px_-10px_rgba(0,0,0,0.1)] overflow-hidden p-1 border border-slate-200">
                 <button
                   onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
                   className={cn("p-2 text-slate-600 rounded-lg hover:bg-slate-100 transition-colors", editor.isActive('heading', { level: 1 }) && 'bg-slate-100 text-black')}
