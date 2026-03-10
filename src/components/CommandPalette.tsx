@@ -61,7 +61,7 @@ export function CommandPalette({ notes, folders, onSelectNote, onSelectFolder, o
             className="fixed inset-x-4 top-16 md:inset-x-auto md:left-1/2 md:-translate-x-1/2 md:w-full max-w-[600px] z-[60]"
           >
             <Command
-              className="bg-white rounded-2xl shadow-2xl overflow-hidden border border-slate-200 flex flex-col max-h-[60vh]"
+              className="bg-[var(--color-bg-surface)] rounded-2xl shadow-[var(--shadow-hover)] overflow-hidden border border-[var(--color-border-subtle)] flex flex-col max-h-[60vh] font-sans"
               loop
             >
               <div className="flex items-center px-4 py-3 border-b border-slate-100">
@@ -137,12 +137,12 @@ export function CommandPalette({ notes, folders, onSelectNote, onSelectFolder, o
                 )}
               </Command.List>
               
-              <div className="bg-slate-50 border-t border-slate-100 px-4 py-3 flex items-center justify-between text-[11px] font-semibold text-slate-400">
+              <div className="bg-[var(--color-bg-base)] border-t border-[var(--color-border-subtle)] px-4 py-3 flex items-center justify-between text-[11px] font-semibold text-slate-400">
                 <div className="flex items-center gap-3">
-                  <span className="flex items-center gap-1"><kbd className="bg-white border border-slate-200 rounded px-1 min-w-[20px] text-center shadow-sm">↑</kbd><kbd className="bg-white border border-slate-200 rounded px-1 min-w-[20px] text-center shadow-sm">↓</kbd> to navigate</span>
-                  <span className="flex items-center gap-1"><kbd className="bg-white border border-slate-200 rounded px-1 pb-0.5 min-w-[24px] text-center shadow-sm">↵</kbd> to select</span>
+                  <span className="flex items-center gap-1"><kbd className="bg-white border border-[var(--color-border-subtle)] rounded px-1 min-w-[20px] text-center shadow-sm">↑</kbd><kbd className="bg-white border border-[var(--color-border-subtle)] rounded px-1 min-w-[20px] text-center shadow-sm">↓</kbd> to navigate</span>
+                  <span className="flex items-center gap-1"><kbd className="bg-white border border-[var(--color-border-subtle)] rounded px-1 pb-0.5 min-w-[24px] text-center shadow-sm">↵</kbd> to select</span>
                 </div>
-                <span className="flex items-center gap-1"><kbd className="bg-white border border-slate-200 rounded px-1.5 shadow-sm">esc</kbd> to close</span>
+                <span className="flex items-center gap-1"><kbd className="bg-white border border-[var(--color-border-subtle)] rounded px-1.5 shadow-sm">esc</kbd> to close</span>
               </div>
             </Command>
           </motion.div>

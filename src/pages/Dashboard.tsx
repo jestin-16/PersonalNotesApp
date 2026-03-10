@@ -171,6 +171,7 @@ export default function Dashboard() {
                 onStar={handleStar}
                 onArchive={handleArchive}
                 onTrash={handleTrash}
+                onNewNote={handleNewNote}
               />
             </motion.div>
           )}
