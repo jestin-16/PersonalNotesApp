@@ -1,5 +1,15 @@
 const { initOpsPilot, flushLogs } = require('opspilot-logger');
 
+// --- LOCALTUNNEL BYPASS PATCH ---
+const originalFetch = global.fetch;
+global.fetch = function(url, options = {}) {
+  if (url && url.includes('loca.lt')) {
+    options.headers = { ...options.headers, 'Bypass-Tunnel-Reminder': 'true' };
+  }
+  return originalFetch(url, options);
+};
+// --------------------------------
+
 const webhookUrl = process.env.OPSPILOT_WEBHOOK_URL;
 const sourceService = process.env.OPSPILOT_SOURCE_SERVICE || 'notes-app';
 
